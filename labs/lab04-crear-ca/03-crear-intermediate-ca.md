@@ -121,7 +121,21 @@ Vuelve al directorio de la autoridad raíz.
 cd ~/pki-ca
 ```
 
-Utiliza la CA raíz para firmar el CSR de la autoridad intermedia.
+Antes de firmar, crea un archivo de extensiones X.509 para que el certificado emitido sea realmente una **CA intermedia** (si no, en el lab 5 la verificación puede fallar con `untrusted`).
+
+Crea el archivo `intermediate/intermediate-ext.cnf` con este contenido:
+
+```bash
+cat > intermediate/intermediate-ext.cnf <<'EOF'
+[ v3_intermediate_ca ]
+basicConstraints = critical, CA:true, pathlen:0
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+EOF
+```
+
+Utiliza la CA raíz para firmar el CSR de la autoridad intermedia **aplicando estas extensiones**.
 
 ```bash
 openssl x509 -req \
@@ -131,7 +145,9 @@ openssl x509 -req \
 -CAcreateserial \
 -out intermediate/intermediate.crt \
 -days 1825 \
--sha256
+-sha256 \
+-extfile intermediate/intermediate-ext.cnf \
+-extensions v3_intermediate_ca
 ```
 
 Este comando utiliza el certificado raíz y su clave privada para emitir el certificado de la autoridad intermedia.
