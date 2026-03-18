@@ -64,7 +64,7 @@ Esto indica que el certificado raíz ha sido incorporado al almacén de confianz
 Busca el certificado recién añadido dentro del almacén del sistema.
 
 ```bash id="qpxlfr"
-grep -R "Training Root CA" /etc/ssl/certs
+grep "<TU_COMMON_NAME>" /etc/ssl/certs/ca-certificates.crt
 ```
 
 Debería aparecer una coincidencia que indique que el certificado forma parte del almacén de confianza.
